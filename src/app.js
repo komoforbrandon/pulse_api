@@ -5,7 +5,7 @@ import pinoHttp from "pino-http";
 import { config } from "./config.js";
 import { logger } from "./lib/logger.js";
 import { rateLimit } from "express-rate-limit";
-
+import authRoute from "./routes/authRoute.js";
 export function createApp() {
   const app = express();
 
@@ -40,6 +40,8 @@ export function createApp() {
   app.get("/health", (req, res) => {
     res.json({ status: "ok" });
   });
+
+  app.use("/auth", authRoute);
 
   return app;
 }
