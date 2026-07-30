@@ -49,5 +49,6 @@ export async function login(req, res) {
       email: operator.email,
       created_at: operator.created_at,
     },
+    message: "Login successful",
   });
 }

@@ -10,7 +10,7 @@ export function authorizeOperator(req, res, next) {
     const payload = verifyToken(token);
     req.operator = { id: payload.sub, email: payload.email };
     next();
-  } catch (err) {
+  } catch {
     next(createError(401, "Invalid or expired token"));
   }
 }
