@@ -1,0 +1,13 @@
+import pg from "pg";
+import { config } from "./config.js";
+
+const { Pool } = pg;
+
+export const db = new Pool({
+  connectionString: config.DATABASE_URL,
+  max: 10,
+});
+
+db.on("connect", () => {
+  console.log("✅ Connected to the database.");
+});
