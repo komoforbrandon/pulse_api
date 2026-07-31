@@ -10,5 +10,5 @@ export function signToken(user) {
 }
 
 export function verifyToken(token) {
-    return jwt.sign(token, config.JWT_SECRET);
+    return jwt.verify(token, config.JWT_SECRET);
 }
