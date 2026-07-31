@@ -10,4 +10,6 @@ router.get("/", monitorController.listMonitors)
 
 router.get("/:id", monitorController.listById)
 
+router.delete("/:id", authorizeOperator, monitorController.deleteById)
+
 export default router;

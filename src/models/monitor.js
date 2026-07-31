@@ -45,3 +45,15 @@ export async function listById(id) {
   );
   return rows[0] ?? null;
 }
+
+export async function deleteById(id) {
+  const { rows } = await db.query(
+      `DELETE FROM monitors
+      WHERE id = $1
+      RETURNING id`,
+      [id],
+  );
+  return rows[0] ?? null;
+}
+
+
