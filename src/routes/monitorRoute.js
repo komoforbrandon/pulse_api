@@ -12,4 +12,6 @@ router.get("/:id", monitorController.listById)
 
 router.delete("/:id", authorizeOperator, monitorController.deleteById)
 
+router.patch("/:id", monitorController.toggleIsActive)
+
 export default router;

@@ -56,4 +56,15 @@ export async function deleteById(id) {
   return rows[0] ?? null;
 }
 
+export async function updateById(id, {is_active, interval_seconds}) {
+  const { rows } = await db.query(
+    `UPDATE monitors
+    SET is_active = COALESCE($2, is_active), interval_seconds=COALESCE($3, interval_seconds)
+    WHERE id = $1
+    RETURNING id, is_active, interval_seconds`,
+    [id, is_active ?? null, interval_seconds ?? null],
+  )
+
+  return rows[0] ?? null;
+}
 

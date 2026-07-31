@@ -3,6 +3,7 @@ import {
   listIdSchema,
   monitorSchema,
   listMonitorSchema,
+  patchMonitorSchema,
 } from "../lib/schemas.js";
 import * as monitorModel from "../models/monitor.js";
 import createError from "http-errors";
@@ -69,6 +70,23 @@ export async function deleteById(req, res, next) {
       return next(createError(404, "URL to Monitor not found"));
     }
     res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function toggleIsActive(req, res, next) {
+  const { id } = parse(listIdSchema, req.params, 400);
+
+  const validateBody = parse(patchMonitorSchema, req.body, 400);
+
+  try {
+    const updatedMonitor = await monitorModel.updateById(id, validateBody)
+     
+    if(!updatedMonitor) {
+      return next(createError(404, "URL to Monitor not found"));
+    }
+    return res.status(204).send();
   } catch (err) {
     next(err);
   }

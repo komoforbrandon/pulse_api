@@ -17,10 +17,15 @@ export const monitorSchema = z.object({
     url: z.string().url(),
     interval_seconds: z.coerce.number().int().min(10).max(3600).default(60),
     expected_status: z.coerce.number().int().min(100).max(599).default(200),
-    is_active: z.coerce.boolean().default(true),
+    is_active: z.boolean().default(true),
 })
 
 export const listMonitorSchema = z.object({
     after: z.coerce.number().positive().optional().default(1),
     limit: z.coerce.number().int().min(1).max(100).default(20),
+})
+
+export const patchMonitorSchema = z.object({
+    is_active: z.boolean().optional(),
+    interval_seconds: z.coerce.number().int().min(10).max(3600).optional(),
 })
