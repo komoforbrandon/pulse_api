@@ -68,3 +68,5 @@ export async function updateById(id, {is_active, interval_seconds}) {
   return rows[0] ?? null;
 }
 
+
+
