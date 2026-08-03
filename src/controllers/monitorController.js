@@ -172,7 +172,7 @@ export async function getMonitorUptimeStats(req, res, next) {
       return next(createError(404, "URL Monitor not found"));
     }
 
-    const stats = uptime({ monitor_id: id, windowString: window });
+    const stats = await uptime({ monitor_id: id, windowString: window });
 
     res.status(200).json({
       message: "Monitor uptime stats",
