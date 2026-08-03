@@ -4,10 +4,12 @@ import {
   monitorSchema,
   listMonitorSchema,
   patchMonitorSchema,
+  checkListSchema,
 } from "../lib/schemas.js";
 import * as monitorModel from "../models/monitor.js";
-import { check } from "../models/check.js";
+import * as checkModel from "../models/check.js";
 import createError from "http-errors";
+import { Transform } from "node:stream";
 
 export async function createMonitor(req, res, next) {
   const validateBody = parse(monitorSchema, req.body, 400);
@@ -95,20 +97,62 @@ export async function toggleIsActive(req, res, next) {
 
 export async function monitorsCheck(req, res, next) {
   const { id } = parse(listIdSchema, req.params, 400);
-  const { after, limit } = parse(listMonitorSchema, req.query, 400);
+  const { after, limit } = parse(checkListSchema, req.query, 400);
 
   try {
     const monitorExist = await monitorModel.listById(id);
     if (!monitorExist) {
       return next(createError(404, "Monitor not found"));
     }
-    const checks = await check({ monitor_id: id, after, limit });
+    const checks = await checkModel.check({ monitor_id: id, after, limit });
 
     res.status(200).json({
       messages: "Monitor list check",
       checks: checks,
       next_cursor: checks.length === limit ? checks.at(-1).id : null,
     });
+  } catch (err) {
+    next(err);
+  }
+}
+
+function createCheckToCsvTransform() {
+  return new Transform({
+    objectMode: true,
+    transform(row, encoding, callback) {
+      const time = row.checked_at ? new Date(row.checked_at).toISOString() : "";
+
+      const errorMsg = row.error ? `"${row.error.replace(/"/g, '""')}"` : "";
+
+      const csvLine = `${row.id},${time},${row.ok},${row.status_code ?? ""},${row.latency_ms ?? ""},${errorMsg}\n`;
+
+      this.push(csvLine);
+
+      callback();
+    },
+  });
+}
+
+export async function exportChecksCsv(req, res, next) {
+  const { id } = parse(listIdSchema, req.params, 400);
+
+  try {
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="monitor-${id}-checks.csv"`,
+    );
+
+    res.write("ID,Timestamp,Is_ok,Status_Code,Latency_Ms,Error\n");
+
+    const dbStream = await checkModel.streamChecksByMonitorId(id);
+
+    const csvFormatter = createCheckToCsvTransform();
+
+    dbStream.pipe(csvFormatter).pipe(res);
+
+    dbStream.on("error", (err) => next(err));
+    csvFormatter.on("error", (err) => next(err));
   } catch (err) {
     next(err);
   }

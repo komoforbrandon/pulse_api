@@ -25,6 +25,11 @@ export const listMonitorSchema = z.object({
     limit: z.coerce.number().int().min(1).max(100).default(20),
 })
 
+export const checkListSchema = z.object({
+    after: z.coerce.number().positive().min(5).optional().default(100),
+    limit: z.coerce.number().int().min(1).max(100).default(20),
+})
+
 export const patchMonitorSchema = z.object({
     is_active: z.boolean().optional(),
     interval_seconds: z.coerce.number().int().min(10).max(3600).optional(),

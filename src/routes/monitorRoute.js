@@ -14,6 +14,8 @@ router.delete("/:id", authorizeOperator, monitorController.deleteById)
 
 router.patch("/:id", monitorController.toggleIsActive)
 
-router.get(":id/checks", monitorController.monitorsCheck)
+router.get("/:id/checks", monitorController.monitorsCheck)
+
+router.get("/:id/checks.csv", monitorController.exportChecksCsv)
 
 export default router;
