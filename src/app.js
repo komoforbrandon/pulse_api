@@ -6,9 +6,10 @@ import { config } from "./config.js";
 import { logger } from "./lib/logger.js";
 import { rateLimit } from "express-rate-limit";
 import authRoute from "./routes/authRoute.js";
-import monitorRoute from './routes/monitorRoute.js'
-import incidentRoute from './routes/incidentRoute.js'
-import statusRoute from './routes/statusRoute.js'
+import monitorRoute from "./routes/monitorRoute.js";
+import incidentRoute from "./routes/incidentRoute.js";
+import statusRoute from "./routes/statusRoute.js";
+import docsRoute from "./routes/docsRoute.js";
 export function createApp() {
   const app = express();
 
@@ -45,9 +46,10 @@ export function createApp() {
   });
 
   app.use("/auth", authRoute);
-  app.use("/monitors", monitorRoute)
-  app.use("/incidents", incidentRoute)
-  app.use("/status", statusRoute)
+  app.use("/monitors", monitorRoute);
+  app.use("/incidents", incidentRoute);
+  app.use("/status", statusRoute);
+  app.use("/docs", docsRoute)
 
   return app;
 }

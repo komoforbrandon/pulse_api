@@ -10,7 +10,7 @@
     "db:seed": "node --env-file=.env scripts/seed.js",
     "db:reset": "node --env-file=.env scripts/reset-db.js",
     "lint": "eslint",
-    "test": "node --env-file=.env.test src/server.js"
+    "test": "node --env-file=.env.test --test test/pulse.test.js"
   },
   "keywords": [],
   "author": "",
