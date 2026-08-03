@@ -20,4 +20,6 @@ router.get("/:id/checks.csv", monitorController.exportChecksCsv)
 
 router.get("/:id/uptime", monitorController.getMonitorUptimeStats)
 
+router.get("/:id/incidents", monitorController.getMonitorIncident)
+
 export default router;

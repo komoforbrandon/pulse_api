@@ -10,6 +10,7 @@ import {
 import * as monitorModel from "../models/monitor.js";
 import * as checkModel from "../models/check.js";
 import { uptime } from "../models/uptime.js";
+import { listMonitorIncidents } from "../models/incident.js";
 import createError from "http-errors";
 import { Transform } from "node:stream";
 
@@ -168,15 +169,41 @@ export async function getMonitorUptimeStats(req, res, next) {
     const monitorExist = await monitorModel.listById(id);
 
     if (!monitorExist) {
-      return next(createError(404, 'URL Monitor not found'));
+      return next(createError(404, "URL Monitor not found"));
     }
 
     const stats = uptime({ monitor_id: id, windowString: window });
 
     res.status(200).json({
-      message: 'Monitor uptime stats',
+      message: "Monitor uptime stats",
       window_requested: window,
-      metrics: stats
+      metrics: stats,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getMonitorIncident(req, res, next) {
+  const { id } = parse(listIdSchema, req.params, 400);
+  const { after, limit } = parse(listMonitorSchema, req.query, 400);
+
+  try {
+    const monitorExists = await monitorModel.listById(id);
+
+    if (!monitorExists) {
+      next(createError(404, "URL Monitor not found"));
+    }
+
+    const monitorIncidents = await listMonitorIncidents({
+      monitor_id: id,
+      after,
+      limit,
+    });
+
+    return res.status(200).json({
+      message: "Monitor incidents",
+      incidents: monitorIncidents,
     });
   } catch (err) {
     next(err);
