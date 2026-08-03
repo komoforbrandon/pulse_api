@@ -8,6 +8,7 @@ import { rateLimit } from "express-rate-limit";
 import authRoute from "./routes/authRoute.js";
 import monitorRoute from './routes/monitorRoute.js'
 import incidentRoute from './routes/incidentRoute.js'
+import statusRoute from './routes/statusRoute.js'
 export function createApp() {
   const app = express();
 
@@ -46,6 +47,7 @@ export function createApp() {
   app.use("/auth", authRoute);
   app.use("/monitors", monitorRoute)
   app.use("/incidents", incidentRoute)
+  app.use("/status", statusRoute)
 
   return app;
 }
