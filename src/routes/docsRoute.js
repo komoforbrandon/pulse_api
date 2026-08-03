@@ -5,13 +5,14 @@ import { fileURLToPath } from "node:url";
 
 const router = Router();
 
-const jsonpath = fileURLToPath(new URL("../../docs/openapi.yaml", import.meta.url));
-
-const spec = JSON.parse(readFileSync(jsonpath, "utf8"));
+const specPath = fileURLToPath(
+  new URL("../../docs/openapi.yaml", import.meta.url),
+);
+const spec = JSON.parse(readFileSync(specPath, "utf8"));
 
 const swaggerHandler = swaggerUi.setup(spec);
 
-router.use("/", swaggerUi.serve)
+router.use("/", swaggerUi.serve);
 router.get("/", swaggerHandler);
 
 export default router;
