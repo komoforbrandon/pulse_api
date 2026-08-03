@@ -34,3 +34,7 @@ export const patchMonitorSchema = z.object({
     is_active: z.boolean().optional(),
     interval_seconds: z.coerce.number().int().min(10).max(3600).optional(),
 })
+
+export const windowSchema = z.object({
+    window: z.enum(['1h', '24h', '7d']).default('24h')
+})

@@ -5,9 +5,11 @@ import {
   listMonitorSchema,
   patchMonitorSchema,
   checkListSchema,
+  windowSchema,
 } from "../lib/schemas.js";
 import * as monitorModel from "../models/monitor.js";
 import * as checkModel from "../models/check.js";
+import { uptime } from "../models/uptime.js";
 import createError from "http-errors";
 import { Transform } from "node:stream";
 
@@ -153,6 +155,29 @@ export async function exportChecksCsv(req, res, next) {
 
     dbStream.on("error", (err) => next(err));
     csvFormatter.on("error", (err) => next(err));
+  } catch (err) {
+    next(err);
+  }
+}
+
+export async function getMonitorUptimeStats(req, res, next) {
+  const { id } = parse(listIdSchema, req.params, 400);
+  const { window } = parse(windowSchema, req.query, 400);
+
+  try {
+    const monitorExist = await monitorModel.listById(id);
+
+    if (!monitorExist) {
+      return next(createError(404, 'URL Monitor not found'));
+    }
+
+    const stats = uptime({ monitor_id: id, windowString: window });
+
+    res.status(200).json({
+      message: 'Monitor uptime stats',
+      window_requested: window,
+      metrics: stats
+    });
   } catch (err) {
     next(err);
   }
