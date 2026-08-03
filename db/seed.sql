@@ -45,8 +45,8 @@ INSERT INTO
 VALUES
     (
         1,
-        'Production API Gateway',
-        'https://api.example.com/health',
+        'Google',
+        'https://www.google.com',
         30,
         200,
         true,
@@ -54,8 +54,8 @@ VALUES
     ),
     (
         1,
-        'Marketing Landing Page',
-        'https://www.example.com',
+        'Tiktok',
+        'https://www.tiktok.com',
         60,
         200,
         true,
@@ -63,8 +63,8 @@ VALUES
     ),
     (
         1,
-        'Admin Dashboard',
-        'https://admin.example.com/login',
+        'Facebook Feed',
+        'https://www.facebook.com',
         120,
         200,
         true,
@@ -72,8 +72,8 @@ VALUES
     ),
     (
         2,
-        'Internal Auth Service',
-        'https://auth.internal.net/health',
+        'Amazon Sales Service',
+        'https://www.amazon.com',
         45,
         200,
         true,
@@ -81,8 +81,8 @@ VALUES
     ),
     (
         2,
-        'Billing API',
-        'https://billing.internal.net/ping',
+        'MTN Service',
+        'https://www.mtn.com',
         60,
         200,
         true,
@@ -90,8 +90,8 @@ VALUES
     ),
     (
         3,
-        'Customer Portal',
-        'https://portal.customer.com/health',
+        'Cameroon MTN Service',
+        'https://www.mtn.cm',
         90,
         200,
         true,
@@ -99,8 +99,8 @@ VALUES
     ),
     (
         4,
-        'Analytics Worker',
-        'https://analytics.acme.dev/status',
+        'ChatGPT AI agent',
+        'https://chatgpt.com',
         300,
         200,
         false,
@@ -108,8 +108,8 @@ VALUES
     ),
     (
         5,
-        'Checkout Service',
-        'https://checkout.northstar.io/health',
+        'Instagram',
+        'https://www.instagram.com',
         60,
         200,
         true,
