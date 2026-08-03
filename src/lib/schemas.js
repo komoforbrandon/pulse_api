@@ -21,7 +21,7 @@ export const monitorSchema = z.object({
 })
 
 export const listMonitorSchema = z.object({
-    after: z.coerce.number().positive().optional().default(1),
+    after: z.coerce.number().positive().optional().default(0),
     limit: z.coerce.number().int().min(1).max(100).default(20),
 })
 
