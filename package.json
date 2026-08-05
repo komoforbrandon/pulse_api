@@ -2,9 +2,15 @@
   "name": "pulse_api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node --env-file=.env src/server.js",
+    "dev": "node --env-file=.env --watch src/server.js",
+    "db:migrate": "node --env-file=.env scripts/migrate.js",
+    "db:seed": "node --env-file=.env scripts/seed.js",
+    "db:reset": "node --env-file=.env scripts/reset-db.js",
+    "lint": "eslint",
+    "test": "node --env-file=.env.test --test test/pulse.test.js"
   },
   "keywords": [],
   "author": "",
@@ -31,6 +37,7 @@
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
     "swagger-ui-express": "^5.0.1",
+    "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -1,0 +1,368 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Pulse API",
+    "version": "1.0.0",
+    "description": "Pulse is an uptime monitoring and public status API for tracking website availability, incidents, and uptime statistics.",
+    "contact": {
+      "name": "Pulse Team",
+      "email": "support@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://pulse-api-xrla.onrender.com",
+      "description": "Local development server"
+    }
+  ],
+  "tags": [
+    { "name": "Auth", "description": "Operator authentication" },
+    { "name": "Monitors", "description": "Monitor management" },
+    { "name": "Incidents", "description": "Incident history" },
+    { "name": "Status", "description": "Public status page data" }
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "summary": "API landing page",
+        "responses": {
+          "200": {
+            "description": "Service metadata",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RootResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "responses": {
+          "200": {
+            "description": "API health",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HealthResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Register an operator",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OperatorRegistrationRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Operator created" },
+          "409": { "description": "Email already exists" },
+          "422": { "description": "Validation error" }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["Auth"],
+        "summary": "Authenticate an operator",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/OperatorLoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Login successful" },
+          "401": { "description": "Invalid credentials" },
+          "422": { "description": "Validation error" }
+        }
+      }
+    },
+    "/monitors": {
+      "get": {
+        "tags": ["Monitors"],
+        "summary": "List monitors",
+        "parameters": [
+          { "$ref": "#/components/parameters/AfterParameter" },
+          { "$ref": "#/components/parameters/LimitParameter" }
+        ],
+        "responses": {
+          "200": {
+            "description": "Monitors list",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MonitorListResponse" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Monitors"],
+        "summary": "Create a monitor",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MonitorCreateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Monitor created" },
+          "400": { "description": "Validation error" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/monitors/{id}": {
+      "get": {
+        "tags": ["Monitors"],
+        "summary": "Get monitor by ID",
+        "parameters": [{ "$ref": "#/components/parameters/MonitorIdParameter" }],
+        "responses": {
+          "200": { "description": "Monitor details" },
+          "404": { "description": "Monitor not found" }
+        }
+      },
+      "patch": {
+        "tags": ["Monitors"],
+        "summary": "Update monitor settings",
+        "parameters": [{ "$ref": "#/components/parameters/MonitorIdParameter" }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MonitorUpdateRequest" }
+            }
+          }
+        },
+        "responses": {
+          "204": { "description": "Monitor updated" },
+          "404": { "description": "Monitor not found" }
+        }
+      },
+      "delete": {
+        "tags": ["Monitors"],
+        "summary": "Delete a monitor",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [{ "$ref": "#/components/parameters/MonitorIdParameter" }],
+        "responses": {
+          "204": { "description": "Monitor deleted" },
+          "404": { "description": "Monitor not found" }
+        }
+      }
+    },
+    "/monitors/{id}/checks": {
+      "get": {
+        "tags": ["Monitors"],
+        "summary": "Get checks for a monitor",
+        "parameters": [
+          { "$ref": "#/components/parameters/MonitorIdParameter" },
+          { "$ref": "#/components/parameters/AfterParameter" },
+          { "$ref": "#/components/parameters/LimitParameter" }
+        ],
+        "responses": {
+          "200": { "description": "Monitor checks" }
+        }
+      }
+    },
+    "/monitors/{id}/checks.csv": {
+      "get": {
+        "tags": ["Monitors"],
+        "summary": "Export checks as CSV",
+        "parameters": [{ "$ref": "#/components/parameters/MonitorIdParameter" }],
+        "responses": {
+          "200": {
+            "description": "CSV export",
+            "content": {
+              "text/csv": {
+                "schema": { "type": "string", "format": "binary" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitors/{id}/uptime": {
+      "get": {
+        "tags": ["Monitors"],
+        "summary": "Get uptime metrics",
+        "parameters": [
+          { "$ref": "#/components/parameters/MonitorIdParameter" },
+          { "$ref": "#/components/parameters/WindowParameter" }
+        ],
+        "responses": {
+          "200": { "description": "Uptime metrics" }
+        }
+      }
+    },
+    "/monitors/{id}/incidents": {
+      "get": {
+        "tags": ["Monitors"],
+        "summary": "Get incidents for a monitor",
+        "parameters": [
+          { "$ref": "#/components/parameters/MonitorIdParameter" },
+          { "$ref": "#/components/parameters/AfterParameter" },
+          { "$ref": "#/components/parameters/LimitParameter" }
+        ],
+        "responses": {
+          "200": { "description": "Monitor incidents" }
+        }
+      }
+    },
+    "/incidents": {
+      "get": {
+        "tags": ["Incidents"],
+        "summary": "List incidents",
+        "parameters": [
+          { "$ref": "#/components/parameters/AfterParameter" },
+          { "$ref": "#/components/parameters/LimitParameter" }
+        ],
+        "responses": {
+          "200": { "description": "Incident list" }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "tags": ["Status"],
+        "summary": "Get public status page data",
+        "responses": {
+          "200": {
+            "description": "Public status payload",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StatusResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "RootResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" },
+          "message": { "type": "string" },
+          "Docs": { "type": "string" },
+          "Health": { "type": "string" }
+        }
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "status": { "type": "string" }
+        }
+      },
+      "OperatorRegistrationRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        }
+      },
+      "OperatorLoginRequest": {
+        "type": "object",
+        "required": ["email", "password"],
+        "properties": {
+          "email": { "type": "string", "format": "email" },
+          "password": { "type": "string" }
+        }
+      },
+      "MonitorCreateRequest": {
+        "type": "object",
+        "required": ["name", "url"],
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string", "format": "uri" },
+          "interval_seconds": { "type": "integer" },
+          "expected_status": { "type": "integer" },
+          "is_active": { "type": "boolean" }
+        }
+      },
+      "MonitorUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "is_active": { "type": "boolean" },
+          "interval_seconds": { "type": "integer" }
+        }
+      },
+      "MonitorListResponse": {
+        "type": "object",
+        "properties": {
+          "messages": { "type": "string" },
+          "URLmonitors": {
+            "type": "array",
+            "items": { "type": "object" }
+          },
+          "next_cursor": { "type": ["integer", "null"] }
+        }
+      },
+      "StatusResponse": {
+        "type": "object",
+        "properties": {
+          "system_status": { "type": "string" },
+          "monitors": {
+            "type": "array",
+            "items": { "type": "object" }
+          },
+          "active_incidents": {
+            "type": "array",
+            "items": { "type": "object" }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "MonitorIdParameter": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "schema": { "type": "integer", "minimum": 1 }
+      },
+      "AfterParameter": {
+        "name": "after",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "integer", "minimum": 0 }
+      },
+      "LimitParameter": {
+        "name": "limit",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "integer", "minimum": 1, "maximum": 100 }
+      },
+      "WindowParameter": {
+        "name": "window",
+        "in": "query",
+        "required": false,
+        "schema": { "type": "string", "enum": ["1h", "24h", "7d"] }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
