@@ -3,7 +3,7 @@ services:
     name: pulse_api
     runtime: node
     plan: free
-    buildCommand: npm ci
+    buildCommand: pnpm ci
     startCommand: node src/server.js
     healthCheckPath: /health
     preDeployCommand: node scripts/migrate.js

@@ -11,7 +11,7 @@
   },
   "servers": [
     {
-      "url": "https://pulse-api-xrla.onrender.com",
+      "url": "https://localhost:3000",
       "description": "Local development server"
     }
   ],

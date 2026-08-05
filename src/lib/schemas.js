@@ -26,7 +26,7 @@ export const listMonitorSchema = z.object({
 })
 
 export const checkListSchema = z.object({
-    after: z.coerce.number().positive().min(5).optional().default(100),
+    after: z.coerce.number().positive().min(5).optional(),
     limit: z.coerce.number().int().min(1).max(100).default(20),
 })
 

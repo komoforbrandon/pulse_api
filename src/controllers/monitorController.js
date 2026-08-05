@@ -18,8 +18,6 @@ export async function createMonitor(req, res, next) {
   const validateBody = parse(monitorSchema, req.body, 400);
   const operator_id = req.operator.id;
 
-  console.log(`This is the operator_id ${operator_id}`);
-
   if (!operator_id) {
     return next(createError(401, "Unauthorized: Missing operator context"));
   }
@@ -32,7 +30,7 @@ export async function createMonitor(req, res, next) {
     });
   } catch (err) {
     if (err.message === "duplicate") {
-      res.status(409).json({ error: "URL monitor already exitst" });
+      res.status(409).json({ error: "URL monitor already exist" });
     }
 
     next(err);
@@ -57,6 +55,10 @@ export async function listById(req, res, next) {
   const { id } = parse(listIdSchema, req.params, 400);
   try {
     const monitor = await monitorModel.listById(id);
+    if(!monitor){
+       return next(createError(404, `Monitor with ID ${id} not found`));
+    }
+
     res.status(200).json({
       messages: "URL to monitor",
       URLmonitor: monitor,
@@ -192,7 +194,7 @@ export async function getMonitorIncident(req, res, next) {
     const monitorExists = await monitorModel.listById(id);
 
     if (!monitorExists) {
-      next(createError(404, "URL Monitor not found"));
+      return next(createError(404, "URL Monitor not found"));
     }
 
     const monitorIncidents = await listMonitorIncidents({

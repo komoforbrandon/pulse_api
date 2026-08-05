@@ -51,6 +51,15 @@ export function createApp() {
   app.use("/status", statusRoute);
   app.use("/docs", docsRoute)
 
+  app.use((err, req, res, next) =>{
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || 'Internal Serval Error';
+
+    logger.error(`[Error] ${status}-${message}: ${err.stack}`);
+
+    return res.status(status).json({error: message})
+  });
+
   return app;
 }
 
